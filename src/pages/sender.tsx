@@ -1,7 +1,14 @@
+import React, { useState } from 'react'
 import FileUpload from '@/components/file-upload'
-import Header from '@/components/header.tsx'
-import ReceiverList from '@/components/receiver-list'
+import Header from '@/components/Header'
+import ReceiverList from '@/components/ReceiverList'
+import FileAttachment from '@/components/DocumentView'
 export default function Sender() {
+	const [files, setFiles] = useState([
+		{ fileName: 'Gurunath Patil - Resume.pdf', fileSize: '104.2 KB' },
+		{ fileName: 'Gurunath Patil - Resume.pdf', fileSize: '104.2 KB' },
+		{ fileName: 'Gurunath Patil - Resume.pdf', fileSize: '104.2 KB' },
+	])
 	return (
 		<>
 			<Header subtitle='Sender' />
@@ -11,6 +18,9 @@ export default function Sender() {
 				</div>
 				<div>
 					<ReceiverList />
+				</div>
+				<div className='mt-5'>
+					<FileAttachment files={files} />
 				</div>
 			</div>
 		</>

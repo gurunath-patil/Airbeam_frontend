@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function FileUpload() {
 	return (
 		<div className='space-y-5'>
@@ -5,7 +7,7 @@ export default function FileUpload() {
 				<h4 className='text-2xl font-semibold'>Upload Files</h4>
 				<p className='text-gray-400'>Drag files here, or click the zone to browse.</p>
 			</div>
-				<button className='border-2 border-dashed border-gray-300 hover:border-gray-400 w-140 h-50 flex flex-col items-center justify-center gap-y-3'>
+				<button className='border-2 border-dashed border-gray-300 hover:border-gray-400 w-155 h-50 flex flex-col items-center justify-center gap-y-3'>
 					<div className='border border-gray-400 p-3'>
 						<svg
 							xmlns='http://www.w3.org/2000/svg'
