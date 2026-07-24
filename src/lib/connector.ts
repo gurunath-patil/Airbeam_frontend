@@ -1,16 +1,11 @@
-import type { IConnector, UserRole, IICECandidate, ISDP } from '@/models/connector.ts'
+import type { canYouNeedThisFile, IConnector, IFileMetaData, IICECandidate, ISDP } from '@/models/connector.ts'
 import SocketConnector from './socket-connector'
 
 export default class Connector extends SocketConnector implements IConnector {
 	peerConnection: RTCPeerConnection | undefined
 	dataChannel: RTCDataChannel | undefined
 	isBothConnected: boolean = false
-	fileToSend: Blob | undefined
 	private iceCandidatesQueue: RTCIceCandidateInit[] = []
-
-	constructor(userRole: UserRole) {
-		super(userRole)
-	}
 
 	createRTCPeerConnection(): void {
 		this.peerConnection = new RTCPeerConnection({
@@ -38,19 +33,7 @@ export default class Connector extends SocketConnector implements IConnector {
 	setupDataChannelHandlers(): void {
 		if (!this.dataChannel) return
 
-		let fileMetadata: { name: string; size: number } | null = null
-		let receivedChunks: ArrayBuffer[] = []
-		let receivedSize = 0
-
-		this.dataChannel.onopen = () => {
-			console.log(`[${this.userRole}] Data channel opened`)
-			if (this.userRole === 'SENDER') {
-				this.dataChannel?.send('hello from SENDER')
-				if (this.fileToSend) {
-					this.sendFiles(this.fileToSend)
-				}
-			}
-		}
+		this.dataChannel.onopen = () => this.handleSenderFiles()
 
 		this.dataChannel.onclose = () => {
 			console.log(`[${this.userRole}] Data channel closed`)
@@ -60,45 +43,7 @@ export default class Connector extends SocketConnector implements IConnector {
 			console.error(`[${this.userRole}] Data channel error:`, error)
 		}
 
-		this.dataChannel.onmessage = (event: MessageEvent) => {
-			if (typeof event.data === 'string') {
-				try {
-					const message = JSON.parse(event.data)
-					if (message.type === 'file-metadata') {
-						fileMetadata = message
-						receivedChunks = []
-						receivedSize = 0
-						console.log(`[${this.userRole}] Preparing to receive file: ${fileMetadata?.name} (${fileMetadata?.size} bytes)`)
-					} else {
-						console.log(`[${this.userRole}] Received data channel text:`, event.data)
-					}
-				} catch (e) {
-					console.log(`[${this.userRole}] Received data channel text:`, event.data)
-				}
-			} else {
-				// Binary data chunk
-				const buffer = event.data as ArrayBuffer
-				receivedChunks.push(buffer)
-				receivedSize += buffer.byteLength
-
-				if (fileMetadata) {
-					console.log(`Received chunk. Progress: ${(receivedSize / fileMetadata.size * 100).toFixed(1)}%`)
-					if (receivedSize >= fileMetadata.size) {
-						const blob = new Blob(receivedChunks)
-						const url = URL.createObjectURL(blob)
-						const a = document.createElement('a')
-						a.href = url
-						a.download = fileMetadata.name
-						a.click()
-						URL.revokeObjectURL(url)
-						console.log(`[${this.userRole}] File received and downloaded: ${fileMetadata.name}`)
-						fileMetadata = null
-						receivedChunks = []
-						receivedSize = 0
-					}
-				}
-			}
-		}
+		this.dataChannel.onmessage = (event: MessageEvent) => this.handleReceiverFiles(event)
 	}
 
 	async createSDPOffer(): Promise<void> {
@@ -198,60 +143,21 @@ export default class Connector extends SocketConnector implements IConnector {
 		this.setupDataChannelHandlers()
 	}
 
-	async sendFiles(file: Blob): Promise<void> {
-		if (!this.dataChannel || this.dataChannel.readyState !== 'open') {
-			console.error('Data channel is not open. Cannot send file.')
-			return
-		}
-		
-		const fileName = (file as File).name || 'file'
-		const fileSize = file.size
-		
-		// Send metadata first
-		this.dataChannel.send(JSON.stringify({
-			type: 'file-metadata',
-			name: fileName,
-			size: fileSize
-		}))
-
-		console.log(`Sending file metadata: ${fileName} (${fileSize} bytes)`)
-
-		// Send file chunks
-		const chunkSize = 16384 // 16KB
-		let offset = 0
-
-		const sendChunk = () => {
-			while (offset < fileSize) {
-				// If buffered amount is too high, pause and wait for bufferedamountlow event
-				if (this.dataChannel && this.dataChannel.bufferedAmount > 65535) {
-					this.dataChannel.onbufferedamountlow = () => {
-						this.dataChannel!.onbufferedamountlow = null
-						sendChunk()
-					}
-					return
-				}
-
-				const slice = file.slice(offset, offset + chunkSize)
-				const reader = new FileReader()
-				reader.onload = (e) => {
-					if (e.target?.result && this.dataChannel && this.dataChannel.readyState === 'open') {
-						this.dataChannel.send(e.target.result as ArrayBuffer)
-						offset += slice.size
-						sendChunk()
-					}
-				}
-				reader.readAsArrayBuffer(slice)
-				return // Wait for readAsArrayBuffer to complete
-			}
-			console.log(`File ${fileName} sent successfully!`)
-		}
-
-		sendChunk()
-	}
-
 	hasBothConnected(): void {
 		const state = this.peerConnection?.iceConnectionState
 		console.log(`[${this.userRole}] connection status`, state)
 		this.isBothConnected = state === 'connected' || state === 'completed'
+	}
+
+	handleReceiverFiles(event: MessageEvent) {
+		throw new Error('Method not implemented.')
+	}
+
+	handleSenderFiles() {
+		throw new Error('Method not implemented.')
+	}
+
+	handleSenderFileRequest(payload: canYouNeedThisFile): void {
+		throw new Error('Method not implemented.')
 	}
 }

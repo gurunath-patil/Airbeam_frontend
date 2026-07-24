@@ -1,13 +1,39 @@
-import React from 'react';
+import { usePeerContext } from '@/context/usePeerContext'
+import React, { useRef } from 'react'
 
 export default function FileUpload() {
+	const buttonRef = useRef<HTMLInputElement | null>(null)
+	const { senderPeer, setFilesToSend, filesToSend } = usePeerContext()
+
+	function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
+		const files = event.target.files
+		if (files && senderPeer) {
+			setFilesToSend([...filesToSend, files[0]])
+		}
+	}
+
+	function handleButtonClick() {
+		if (buttonRef.current) {
+			buttonRef.current.click()
+		}
+	}
 	return (
 		<div className='space-y-5'>
 			<div>
 				<h4 className='text-2xl font-semibold'>Upload Files</h4>
 				<p className='text-gray-400'>Drag files here, or click the zone to browse.</p>
 			</div>
-				<button className='border-2 border-dashed border-gray-300 hover:border-gray-400 w-155 h-50 flex flex-col items-center justify-center gap-y-3'>
+			<input
+				ref={buttonRef}
+				type='file'
+				className='hidden'
+				id='file-upload'
+				onChange={handleFileUpload}
+			/>
+			<label htmlFor='file-upload'>
+				<button
+					className='border-2 border-dashed border-gray-300 hover:border-gray-400 w-155 h-50 flex flex-col items-center justify-center gap-y-3'
+					onClick={handleButtonClick}>
 					<div className='border border-gray-400 p-3'>
 						<svg
 							xmlns='http://www.w3.org/2000/svg'
@@ -26,6 +52,7 @@ export default function FileUpload() {
 					<h5 className='font-medium'>Drag files here</h5>
 					<p className='text-gray-400'>Images, videos, documents - any format.</p>
 				</button>
+			</label>
 		</div>
 	)
 }

@@ -16,7 +16,27 @@ interface IConnector {
 	createICECandidate(event: RTCPeerConnectionIceEvent, channelName?: string): void
 	setICECandidate(payload: IICECandidate): Promise<void>
 	hasBothConnected(): void
-	sendFiles(files:Blob): Promise<void>
+	handleSenderFiles(): void
+	handleReceiverFiles(event: MessageEvent): void
+}
+
+interface ISenderConnector extends IConnector {
+	fileToSend: Blob[] | []
+	sendFiles(file: Blob): Promise<void>
+	canYouNeedThisFile(): void
+}
+
+type canYouNeedThisFile = {
+	sender_channel_name: string
+	sender_user_name: string
+	files: {
+		name: string
+		size: number
+		type?: string
+	}[]
+}
+interface IReceiverConnector extends IConnector {
+	handleSenderFileRequest(metaData: canYouNeedThisFile): void
 }
 
 type PayloadType =
@@ -27,7 +47,7 @@ type PayloadType =
 	| 'exchange_sdp'
 	| 'exchange_ice_candidate'
 	| 'set_sender'
-	
+
 type UserRole = 'SENDER' | 'RECEIVER'
 
 interface IPayload {
@@ -50,11 +70,23 @@ interface ISDP extends IPayload {
 	SDP: RTCSessionDescriptionInit
 }
 
-interface IUserList{
-	id:number
+interface IUserList {
+	id: number
 	channel_name: string
-	role:string
-	update_at:string
+	role: string
+	user_name: string
 }
 
-export type { IConnector, IPayload, ISocketIDPayload, UserRole, PayloadType, IICECandidate, ISDP, IUserList }
+export type {
+	IConnector,
+	IPayload,
+	ISocketIDPayload,
+	UserRole,
+	PayloadType,
+	IICECandidate,
+	ISDP,
+	IUserList,
+	ISenderConnector,
+	IReceiverConnector,
+	canYouNeedThisFile,
+}

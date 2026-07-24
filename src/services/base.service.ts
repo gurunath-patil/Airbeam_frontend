@@ -7,8 +7,8 @@ export default class BaseService<T> {
 		this.baseUrl = baseUrl
 	}
 
-	async get(url: string): Promise<T> {
-		const response = await fetch(`${this.baseUrl}${url}`)
+	async get(url: string = this.baseUrl): Promise<T> {
+		const response = await fetch(url)
 
 		if (!response.ok) {
 			throw new Error(response.statusText)
@@ -17,8 +17,8 @@ export default class BaseService<T> {
 		return response.json()
 	}
 
-	async post(url: string, body: unknown): Promise<T> {
-		const response = await fetch(`${this.baseUrl}${url}`, {
+	async post(url: string = this.baseUrl, body: unknown): Promise<T> {
+		const response = await fetch(url, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -33,8 +33,8 @@ export default class BaseService<T> {
 		return response.json()
 	}
 
-	async put(url: string, body: unknown): Promise<T> {
-		const response = await fetch(`${this.baseUrl}${url}`, {
+	async put(url: string= this.baseUrl, body: unknown): Promise<T> {
+		const response = await fetch(url, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -49,8 +49,8 @@ export default class BaseService<T> {
 		return response.json()
 	}
 
-	async patch(url: string, body: unknown): Promise<T> {
-		const response = await fetch(`${this.baseUrl}${url}`, {
+	async patch(url: string = this.baseUrl, body: unknown): Promise<T> {
+		const response = await fetch(url, {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
@@ -65,8 +65,8 @@ export default class BaseService<T> {
 		return response.json()
 	}
 
-	async delete(url: string): Promise<T> {
-		const response = await fetch(`${this.baseUrl}${url}`, {
+	async delete(url: string= this.baseUrl): Promise<T> {
+		const response = await fetch(url, {
 			method: 'DELETE',
 		})
 
@@ -79,4 +79,4 @@ export default class BaseService<T> {
 }
 
 const httpBaseUrl = import.meta.env.VITE_HTTP_BASE_URL
-export const senderReceiver = new BaseService<IUserList[]>(httpBaseUrl+"users/active_user")
+export const senderReceiver = new BaseService<IUserList[]>(httpBaseUrl+"users/active_user/")

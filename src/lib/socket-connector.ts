@@ -4,24 +4,22 @@ import type {
 	IICECandidate,
 	ISDP,
 	IPayload,
+	IFileMetaData,
+	canYouNeedThisFile,
 } from '@/models/connector.ts'
 
 export default abstract class SocketConnector {
 	socketRef: WebSocket | undefined
-	socketID = ''
-	socketBaseUrl = import.meta.env.VITE_WEB_SOCKET_BASE_URL
+	socketID: string = ''
+	socketBaseUrl: string = import.meta.env.VITE_WEB_SOCKET_BASE_URL
 	userRole: UserRole | undefined
-	receiverChannelName = ''
+	receiverChannelName: string = ''
 	onStatusChange?: (status: string, details?: string) => void
 	onProgress?: (progress: number) => void
 	protected wsMessageQueue: any[] = []
 	private socketOpenPromise: Promise<void> | undefined
 	private resolveSocketOpen: (() => void) | undefined
 	private rejectSocketOpen: ((reason: any) => void) | undefined
-
-	constructor(userRole: UserRole) {
-		this.userRole = userRole
-	}
 
 	setReceiverChannel(channelName: string) {
 		this.receiverChannelName = channelName
@@ -35,14 +33,14 @@ export default abstract class SocketConnector {
 		}
 	}
 
-	sendMyChannelname(){
+	sendMyChannelname() {
 		if (!this.receiverChannelName) {
-			console.warn("No receiver channel name set. Cannot send channel name.")
+			console.warn('No receiver channel name set. Cannot send channel name.')
 			return
 		}
 		const payload = {
-			"type":"sender_channel_name",
-			"receiver_channel_name": this.receiverChannelName
+			type: 'sender_channel_name',
+			receiver_channel_name: this.receiverChannelName,
 		}
 		this.sendMessage(payload)
 	}
@@ -104,6 +102,7 @@ export default abstract class SocketConnector {
 				exchange_sdp: (payload) => this.setSDP(payload),
 				exchange_ice_candidate: (payload) => this.setICECandidate(payload),
 				set_sender: (payload) => this.setReceiverChannel(payload.sender_channel_name),
+				can_you_need_this_files: (payload) => this.handleSenderFileRequest(payload),
 			}
 			if (Object.hasOwn(methodRef, parseData.type)) {
 				methodRef[parseData.type](parseData)
@@ -129,4 +128,5 @@ export default abstract class SocketConnector {
 	abstract createRTCPeerConnection(): void
 	abstract setSDP(payload: ISDP): Promise<void>
 	abstract setICECandidate(payload: IICECandidate): Promise<void>
+	abstract handleSenderFileRequest(payload: canYouNeedThisFile): void
 }

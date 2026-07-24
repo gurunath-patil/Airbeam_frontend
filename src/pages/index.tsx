@@ -1,8 +1,26 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom'
+import { usePeerContext } from '@/context/usePeerContext'
+import SenderConnector from '@/lib/senderConnector'
+import ReceiverConnector from '@/lib/receiverConnector'
 
 export default function HomePage() {
+	const { setSenderPeer, setReceiverPeer } = usePeerContext()
+	const navigate = useNavigate()
+
+	function handleSenderClick() {
+		setSenderPeer(new SenderConnector())
+		setReceiverPeer(null)
+		navigate('/sender')
+	}
+	function handleReceiverClick() {
+		const receiverPeerInstance = new ReceiverConnector()
+		setReceiverPeer(receiverPeerInstance)
+		setSenderPeer(null)
+		receiverPeerInstance?.registerInSocket()
+		navigate('/receiver')
+	}
 	return (
-		<div className="flex flex-col justify-center gap-y-15 items-center h-screen">
+		<div className='flex flex-col justify-center gap-y-15 items-center h-screen'>
 			<div className='flex flex-col gap-y-3 items-center'>
 				<div className='flex items-center gap-2 text-gray-400'>
 					<svg
@@ -24,8 +42,10 @@ export default function HomePage() {
 				<p className='capitalize text-gray-400'>select your role to begin the session.</p>
 			</div>
 
-			<div className="flex gap-x-5 justify-center">
-				<button className='w-[260px] h-[260px] bg-white border border-gray-200 text-left p-8 flex flex-col justify-start items-start transition-all hover:border-gray-400 hover:shadow-sm focus:outline-none group'>
+			<div className='flex gap-x-5 justify-center'>
+				<button
+					className='w-[260px] h-[260px] bg-white border border-gray-200 text-left p-8 flex flex-col justify-start items-start transition-all hover:border-gray-400 hover:shadow-sm focus:outline-none group'
+					onClick={handleSenderClick}>
 					<div className='mb-7 text-gray-500 group-hover:text-gray-800 transition-colors'>
 						<svg
 							xmlns='http://www.w3.org/2000/svg'
@@ -49,7 +69,9 @@ export default function HomePage() {
 						</p>
 					</div>
 				</button>
-				<button className='w-[260px] h-[260px] bg-white border border-gray-200 text-left p-8 flex flex-col justify-start items-start transition-all hover:border-gray-400 hover:shadow-sm focus:outline-none group'>
+				<button
+					className='w-[260px] h-[260px] bg-white border border-gray-200 text-left p-8 flex flex-col justify-start items-start transition-all hover:border-gray-400 hover:shadow-sm focus:outline-none group'
+					onClick={handleReceiverClick}>
 					<div className='mb-7 text-gray-500 group-hover:text-gray-800 transition-colors'>
 						<svg
 							xmlns='http://www.w3.org/2000/svg'
@@ -74,9 +96,11 @@ export default function HomePage() {
 					</div>
 				</button>
 			</div>
-            <div className="flex justify-center">
-                <p className="text-gray-400 font-mono">Devices on the same network are discovered automatically.</p>
-            </div>
+			<div className='flex justify-center'>
+				<p className='text-gray-400 font-mono'>
+					Devices on the same network are discovered automatically.
+				</p>
+			</div>
 		</div>
 	)
 }

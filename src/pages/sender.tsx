@@ -1,14 +1,20 @@
-import React, { useState } from 'react'
-import FileUpload from '@/components/file-upload'
+import { useEffect, useState } from 'react'
+import FileUpload from '@/components/FileUpload'
 import Header from '@/components/Header'
 import ReceiverList from '@/components/ReceiverList'
 import FileAttachment from '@/components/DocumentView'
+import { usePeerContext } from '@/context/usePeerContext'
+import { useNavigate } from 'react-router-dom'
+
 export default function Sender() {
-	const [files, setFiles] = useState([
-		{ fileName: 'Gurunath Patil - Resume.pdf', fileSize: '104.2 KB' },
-		{ fileName: 'Gurunath Patil - Resume.pdf', fileSize: '104.2 KB' },
-		{ fileName: 'Gurunath Patil - Resume.pdf', fileSize: '104.2 KB' },
-	])
+	const { senderPeer, filesToSend } = usePeerContext()
+	const navigate = useNavigate()
+
+	useEffect(() => {
+		if (!senderPeer) {
+			navigate('/')
+		}
+	}, [])
 	return (
 		<>
 			<Header subtitle='Sender' />
@@ -20,7 +26,7 @@ export default function Sender() {
 					<ReceiverList />
 				</div>
 				<div className='mt-5'>
-					<FileAttachment files={files} />
+					<FileAttachment files={filesToSend} />
 				</div>
 			</div>
 		</>

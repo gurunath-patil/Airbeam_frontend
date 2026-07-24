@@ -1,7 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'
 
 export default function Header(props: IHeaderProps) {
 	const { subtitle } = props
+	const navigate = useNavigate()
+	
+	function handleExitSession() {
+		navigate('/')
+	}
 	return (
 		<div className='flex items-center justify-between py-4 px-7 border-b border-gray-400'>
 				<div className='flex items-center gap-2 text-gray-400'>
@@ -22,7 +28,7 @@ export default function Header(props: IHeaderProps) {
 					<span>|</span> <h2 className=''>{subtitle}</h2>
 				</div>
 			<div className='text-gray-400 font-mono hover:text-black'>
-				<button>Exit session</button>
+				<button onClick={handleExitSession}>Exit session</button>
 			</div>
 		</div>
 	)
