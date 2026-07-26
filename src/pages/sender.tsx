@@ -25,7 +25,9 @@ export default function Sender() {
 			<div className='grid grid-cols-1 gap-y-14 md:grid-cols-2 p-8 md:px-30 md:py-20 gap-x-20'>
 				<div className='flex flex-col gap-y-5'>
 					<FileUpload />
-					<FileAttachment files={filesToSend} />
+					<div>
+						<FileAttachment files={filesToSend} />
+					</div>
 				</div>
 				<div className=' border-amber-600'>
 					<ReceiverList />

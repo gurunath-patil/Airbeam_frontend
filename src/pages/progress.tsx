@@ -5,7 +5,7 @@ import CircularProgress from '@/components/CircularProgress'
 import DocumentView from '@/components/DocumentView'
 import { useNavigate } from 'react-router-dom'
 export default function Progress() {
-	const { transferProgress, filesToSend } = usePeerContext()
+	const { transferProgress, filesToSend, setFilesToSend, receiverPeer } = usePeerContext()
 	const [transferred, setTransferred] = useState<number>(0)
 	const [totalSize, setTotalSize] = useState(0)
 	const navigate = useNavigate()
@@ -35,6 +35,10 @@ export default function Progress() {
 
 	function onBackToHome(event: React.MouseEvent<HTMLButtonElement>) {
 		event.preventDefault()
+		if (receiverPeer) {
+			receiverPeer.exitSession()
+		}
+		setFilesToSend([])
 		navigate('/')
 	}
 	return (

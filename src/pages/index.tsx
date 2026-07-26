@@ -20,7 +20,7 @@ export default function HomePage() {
 		navigate('/receiver')
 	}
 	return (
-		<div className='flex flex-col justify-center gap-y-15 items-center h-screen'>
+		<div className='flex flex-col justify-center gap-y-5 md:gap-y-15 items-center h-screen'>
 			<div className='flex flex-col gap-y-3 items-center'>
 				<div className='flex items-center gap-2 text-gray-400'>
 					<svg
@@ -42,9 +42,9 @@ export default function HomePage() {
 				<p className='capitalize text-gray-400'>select your role to begin the session.</p>
 			</div>
 
-			<div className='flex gap-x-5 justify-center'>
+			<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 				<button
-					className='w-[260px] h-[260px] bg-white border border-gray-200 text-left p-8 flex flex-col justify-start items-start transition-all hover:border-gray-400 hover:shadow-sm focus:outline-none group'
+					className='w-[260px] h-[230px] md:h-[260px] bg-white border border-gray-200 text-left p-8 flex flex-col justify-start items-start transition-all hover:border-gray-400 hover:shadow-sm focus:outline-none group'
 					onClick={handleSenderClick}>
 					<div className='mb-7 text-gray-500 group-hover:text-gray-800 transition-colors'>
 						<svg
@@ -70,7 +70,7 @@ export default function HomePage() {
 					</div>
 				</button>
 				<button
-					className='w-[260px] h-[260px] bg-white border border-gray-200 text-left p-8 flex flex-col justify-start items-start transition-all hover:border-gray-400 hover:shadow-sm focus:outline-none group'
+					className='w-[260px] h-[230px] md:h-[260px] bg-white border border-gray-200 text-left p-8 flex flex-col justify-start items-start transition-all hover:border-gray-400 hover:shadow-sm focus:outline-none group'
 					onClick={handleReceiverClick}>
 					<div className='mb-7 text-gray-500 group-hover:text-gray-800 transition-colors'>
 						<svg
@@ -96,7 +96,7 @@ export default function HomePage() {
 					</div>
 				</button>
 			</div>
-			<div className='flex justify-center'>
+			<div className='flex justify-center px-10 md:px-0'>
 				<p className='text-gray-400 font-mono'>
 					Devices on the same network are discovered automatically.
 				</p>

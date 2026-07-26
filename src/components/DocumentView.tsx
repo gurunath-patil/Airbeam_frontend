@@ -17,7 +17,7 @@ export default function FileAttachment({ files = [] }: IProps) {
 					className='w-full max-w-2xl border border-gray-200 rounded bg-white text-sm font-mono text-gray-700'>
 					{/* Top Row: File Name and Size */}
 					<div className='flex items-center justify-between p-4 border-b border-gray-100'>
-						<div className='flex items-center gap-3'>
+						<div className='flex items-center gap-3 w-6/12'>
 							{/* File Icon */}
 							<svg
 								className='w-5 h-5 text-gray-400 flex-shrink-0'
@@ -33,7 +33,7 @@ export default function FileAttachment({ files = [] }: IProps) {
 							</svg>
 							<span className='text-gray-900 truncate font-sans tracking-wide'>{file.name}</span>
 						</div>
-						<span className='text-gray-400 tabular-nums'>{(file.size / 1024).toFixed(1)} KB</span>
+						<span className='text-gray-400'>{(file.size / 1024).toFixed(1)} KB</span>
 					</div>
 
 					{index === files.length - 1 && (
