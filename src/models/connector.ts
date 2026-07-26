@@ -26,14 +26,16 @@ interface ISenderConnector extends IConnector {
 	canYouNeedThisFile(): void
 }
 
+type Files = {
+	name: string
+	size: string
+	type?: string
+}
+
 type canYouNeedThisFile = {
 	sender_channel_name: string
-	sender_user_name: string
-	files: {
-		name: string
-		size: number
-		type?: string
-	}[]
+	user_name: string
+	files: Files[]
 }
 interface IReceiverConnector extends IConnector {
 	handleSenderFileRequest(metaData: canYouNeedThisFile): void
@@ -89,4 +91,5 @@ export type {
 	ISenderConnector,
 	IReceiverConnector,
 	canYouNeedThisFile,
+	Files
 }

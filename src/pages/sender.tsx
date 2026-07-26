@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import FileUpload from '@/components/FileUpload'
 import Header from '@/components/Header'
 import ReceiverList from '@/components/ReceiverList'
@@ -7,7 +7,7 @@ import { usePeerContext } from '@/context/usePeerContext'
 import { useNavigate } from 'react-router-dom'
 
 export default function Sender() {
-	const { senderPeer, filesToSend } = usePeerContext()
+	const { senderPeer, filesToSend, transferProgress } = usePeerContext()
 	const navigate = useNavigate()
 
 	useEffect(() => {
@@ -15,6 +15,10 @@ export default function Sender() {
 			navigate('/')
 		}
 	}, [])
+
+	useEffect(() => {
+		console.log('sender side transferProgress', transferProgress)
+	}, [transferProgress])
 	return (
 		<>
 			<Header subtitle='Sender' />

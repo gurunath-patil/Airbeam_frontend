@@ -2,11 +2,12 @@ import type { IUserList } from '@/models/connector'
 import { senderReceiver } from '@/services/base.service'
 import { useEffect, useState } from 'react'
 import { usePeerContext } from '@/context/usePeerContext'
+import { useNavigate } from 'react-router-dom'
 
 export default function ReceiverList() {
 	const { senderPeer, filesToSend } = usePeerContext()
 	const [receiverList, setReceiverList] = useState<IUserList[]>([])
-
+	const navigate = useNavigate()
 	function getInitials(name: string) {
 		if (!name) return ''
 
@@ -33,10 +34,10 @@ export default function ReceiverList() {
 		senderPeer.registerInSocket()
 		senderPeer.setReceiverChannel(receiver.channel_name)
 		senderPeer.canYouNeedThisFile()
-		// senderPeer.socketOpenPromise.then(() => {
-		// 	senderPeer.sendMyChannelname()
-		// 	senderPeer.createSDPOffer()
-		// })
+		senderPeer.socketOpenPromise.then(() => {
+			senderPeer.sendMyChannelname()
+		})
+		navigate('/progress')
 	}
 
 	return (

@@ -1,5 +1,14 @@
+import type { Files } from '@/models/connector'
 import React from 'react'
 
+interface IFileTransferNotification {
+	senderName: string
+	connectionType?: string
+	networkType?: string
+	files: Files[]
+	onAccept?: () => void
+	onDecline?: () => void
+}
 const FileTransferNotification = ({
 	senderName = "Aria's MacBook Pro",
 	connectionType = 'Guest Device',
@@ -10,7 +19,7 @@ const FileTransferNotification = ({
 	],
 	onAccept = () => console.log('Accepted'),
 	onDecline = () => console.log('Declined'),
-}) => {
+}: IFileTransferNotification) => {
 	// Dynamic calculation for totals based on props
 	const totalFiles = files.length
 

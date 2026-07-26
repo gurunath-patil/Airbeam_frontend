@@ -1,12 +1,4 @@
-import type {
-	ISocketIDPayload,
-	UserRole,
-	IICECandidate,
-	ISDP,
-	IPayload,
-	IFileMetaData,
-	canYouNeedThisFile,
-} from '@/models/connector.ts'
+import type { ISocketIDPayload, UserRole, IPayload } from '@/models/connector.ts'
 
 export default abstract class SocketConnector {
 	socketRef: WebSocket | undefined
@@ -20,6 +12,7 @@ export default abstract class SocketConnector {
 	private socketOpenPromise: Promise<void> | undefined
 	private resolveSocketOpen: (() => void) | undefined
 	private rejectSocketOpen: ((reason: any) => void) | undefined
+	methodRef: Record<string, (payload: any) => void> | undefined = undefined
 
 	setReceiverChannel(channelName: string) {
 		this.receiverChannelName = channelName
@@ -98,17 +91,15 @@ export default abstract class SocketConnector {
 	async socketMessageHandler(event: MessageEvent): Promise<void> {
 		try {
 			const parseData: IPayload = JSON.parse(event.data)
-			const methodRef: Record<string, (payload: any) => void> = {
-				exchange_sdp: (payload) => this.setSDP(payload),
-				exchange_ice_candidate: (payload) => this.setICECandidate(payload),
-				set_sender: (payload) => this.setReceiverChannel(payload.sender_channel_name),
-				can_you_need_this_files: (payload) => this.handleSenderFileRequest(payload),
-			}
-			if (Object.hasOwn(methodRef, parseData.type)) {
-				methodRef[parseData.type](parseData)
+			if (!this.methodRef) throw new Error('socket message handler: methodRef not defined')
+
+			if (Object.hasOwn(this.methodRef, parseData.type) && this.methodRef[parseData.type]) {
+				this.methodRef[parseData.type](parseData)
+			} else {
+				throw new Error('socket message handler: method not found')
 			}
 		} catch (error) {
-			console.error('Error handling WebSocket message:', error)
+			console.error(error)
 		}
 	}
 
@@ -126,7 +117,4 @@ export default abstract class SocketConnector {
 	}
 
 	abstract createRTCPeerConnection(): void
-	abstract setSDP(payload: ISDP): Promise<void>
-	abstract setICECandidate(payload: IICECandidate): Promise<void>
-	abstract handleSenderFileRequest(payload: canYouNeedThisFile): void
 }

@@ -1,4 +1,4 @@
-import type { canYouNeedThisFile, IConnector, IFileMetaData, IICECandidate, ISDP } from '@/models/connector.ts'
+import type { canYouNeedThisFile, IConnector, IICECandidate, ISDP } from '@/models/connector.ts'
 import SocketConnector from './socket-connector'
 
 export default class Connector extends SocketConnector implements IConnector {
@@ -6,6 +6,16 @@ export default class Connector extends SocketConnector implements IConnector {
 	dataChannel: RTCDataChannel | undefined
 	isBothConnected: boolean = false
 	private iceCandidatesQueue: RTCIceCandidateInit[] = []
+
+	constructor() {
+		super()
+		this.methodRef = {
+			...this.methodRef,
+			exchange_sdp: (payload) => this.setSDP(payload),
+			exchange_ice_candidate: (payload) => this.setICECandidate(payload),
+			set_sender: (payload) => this.setReceiverChannel(payload.sender_channel_name),
+		}
+	}
 
 	createRTCPeerConnection(): void {
 		this.peerConnection = new RTCPeerConnection({

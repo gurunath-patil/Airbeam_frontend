@@ -4,16 +4,16 @@ import SenderConnector from '@/lib/senderConnector'
 import ReceiverConnector from '@/lib/receiverConnector'
 
 export default function HomePage() {
-	const { setSenderPeer, setReceiverPeer } = usePeerContext()
+	const { setSenderPeer, setReceiverPeer, setTransferProgress, setRequestedSenderName, setFilesToSend } = usePeerContext()
 	const navigate = useNavigate()
 
 	function handleSenderClick() {
-		setSenderPeer(new SenderConnector())
+		setSenderPeer(new SenderConnector(setTransferProgress))
 		setReceiverPeer(null)
 		navigate('/sender')
 	}
 	function handleReceiverClick() {
-		const receiverPeerInstance = new ReceiverConnector()
+		const receiverPeerInstance = new ReceiverConnector(setTransferProgress, setRequestedSenderName, setFilesToSend)
 		setReceiverPeer(receiverPeerInstance)
 		setSenderPeer(null)
 		receiverPeerInstance?.registerInSocket()
