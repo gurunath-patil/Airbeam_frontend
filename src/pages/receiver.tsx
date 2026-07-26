@@ -5,12 +5,16 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function Receiver() {
-	const { transferProgress, receiverPeer, requestedSenderName, filesToSend } = usePeerContext()
+	const { receiverPeer, requestedSenderName, filesToSend } = usePeerContext()
 	const [isSenderRequest, setIsSenderRequest] = useState(false)
 	const navigate = useNavigate()
 
 	useEffect(() => {
-		receiverPeer.setSenderRequest(setIsSenderRequest)
+		if (!receiverPeer) {
+			navigate('/')
+		}else{
+			receiverPeer.setSenderRequest(setIsSenderRequest)
+		}
 	}, [])
 
 	function handleAcceptBtn() {
@@ -22,10 +26,6 @@ export default function Receiver() {
 		receiverPeer.sendRequestAns(true)
 		navigate('/')
 	}
-
-	useEffect(() => {
-		console.log('sender side transferProgress', transferProgress)
-	}, [transferProgress])
 
 	return isSenderRequest ? (
 		<FileTransferNotification

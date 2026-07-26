@@ -27,6 +27,12 @@ export default function Progress() {
 		)
 	}, [])
 
+	useEffect(() => {
+		if (filesToSend.length === 0) {
+			navigate('/')
+		}
+	}, [])
+
 	function onBackToHome(event: React.MouseEvent<HTMLButtonElement>) {
 		event.preventDefault()
 		navigate('/')
