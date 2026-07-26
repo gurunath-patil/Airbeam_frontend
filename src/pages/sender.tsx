@@ -22,15 +22,13 @@ export default function Sender() {
 	return (
 		<>
 			<Header subtitle='Sender' />
-			<div className='grid grid-cols-2 px-30 py-20 gap-x-15'>
-				<div className=''>
+			<div className='grid grid-cols-1 gap-y-14 md:grid-cols-2 p-8 md:px-30 md:py-20 gap-x-20'>
+				<div className='flex flex-col gap-y-5'>
 					<FileUpload />
-				</div>
-				<div>
-					<ReceiverList />
-				</div>
-				<div className='mt-5'>
 					<FileAttachment files={filesToSend} />
+				</div>
+				<div className=' border-amber-600'>
+					<ReceiverList />
 				</div>
 			</div>
 		</>

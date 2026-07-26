@@ -32,7 +32,7 @@ export default function FileUpload() {
 			/>
 			<label htmlFor='file-upload'>
 				<button
-					className='border-2 border-dashed border-gray-300 hover:border-gray-400 w-155 h-50 flex flex-col items-center justify-center gap-y-3'
+					className='border-2 border-dashed border-gray-300 hover:border-gray-400 w-full h-50 flex flex-col items-center justify-center gap-y-3'
 					onClick={handleButtonClick}>
 					<div className='border border-gray-400 p-3'>
 						<svg

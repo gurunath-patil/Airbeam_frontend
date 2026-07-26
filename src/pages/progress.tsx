@@ -40,13 +40,13 @@ export default function Progress() {
 			</div>
 
 			{/* Main Container */}
-			<div className='w-full grid grid-cols-2 max-w-4xl bg-white rounded-2xl shadow-sm border border-slate-200/80 p-8'>
+			<div className='w-full grid grid-cols-1 md:grid-cols-2 max-w-4xl bg-white rounded-2xl shadow-sm border border-slate-200/80 p-8'>
 				<div className='flex flex-col items-center pt-6 md:pt-0'>
 					<CircularProgress percentage={transferProgress} />
 
 					<p className='mt-6 text-base font-medium text-slate-800'>You</p>
 
-					<div className='mt-12 text-center'>
+					<div className='md:mt-12 text-center'>
 						<span className='text-xs font-mono text-slate-400 block mb-1'>Transferred</span>
 						<span className='text-sm font-semibold text-slate-700 font-mono'>
 							{formatFileSize(transferred)} / {formatFileSize(totalSize)}
@@ -54,10 +54,10 @@ export default function Progress() {
 					</div>
 				</div>
 				<div className='flex flex-col justify-between'>
-					<div>
+					<div className='mt-5 md:mt-0'>
 						<DocumentView files={filesToSend} />
 					</div>
-					<div>
+					<div className='mt-5 md:mt-0'>
 						<button
 							onClick={onBackToHome}
 							className='w-full border border-gray-200 rounded bg-white hover:bg-gray-100 active:bg-gray-100 transition-colors py-4 text-sm font-medium text-gray-900 flex items-center justify-center gap-2 cursor-pointer'>

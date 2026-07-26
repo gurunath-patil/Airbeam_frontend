@@ -1,22 +1,18 @@
 import type { Files } from '@/models/connector'
-import React from 'react'
 
 interface IFileTransferNotification {
 	senderName: string
 	connectionType?: string
 	networkType?: string
 	files: Files[]
-	onAccept?: () => void
-	onDecline?: () => void
+	onAccept: () => void
+	onDecline: () => void
 }
 const FileTransferNotification = ({
-	senderName = "Aria's MacBook Pro",
+	senderName,
 	connectionType = 'Guest Device',
 	networkType = 'Local Network',
-	files = [
-		{ name: 'Brand_Assets_Q4.zip', size: '48.3 MB', type: 'zip' },
-		{ name: 'Campaign_Brief.pdf', size: '1.2 MB', type: 'pdf' },
-	],
+	files,
 	onAccept = () => console.log('Accepted'),
 	onDecline = () => console.log('Declined'),
 }: IFileTransferNotification) => {
@@ -35,7 +31,7 @@ const FileTransferNotification = ({
 	return (
 		<div className='flex flex-col items-center justify-center font-mono p-6 bg-gray-50 min-h-screen'>
 			{/* Card Wrapper */}
-			<div className='w-[450px] bg-white border border-gray-200 shadow-sm select-none'>
+			<div className='w-[20em] md:w-[450px] bg-white border border-gray-200 shadow-sm select-none'>
 				{/* Header Section */}
 				<div className='flex items-center gap-4 p-5 border-b border-gray-100'>
 					<div className='bg-black text-white p-2.5'>

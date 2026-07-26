@@ -13,7 +13,7 @@ export default function Header(props: IHeaderProps) {
 		navigate('/')
 	}
 	return (
-		<div className='flex items-center justify-between py-4 px-7 border-b border-gray-400'>
+		<div className='flex items-center justify-between p-3 md:py-4 md:px-7 border-b border-gray-400 text-sm :md:text-lg'>
 			<div className='flex items-center gap-2 text-gray-400'>
 				<svg
 					xmlns='http://www.w3.org/2000/svg'
@@ -21,7 +21,7 @@ export default function Header(props: IHeaderProps) {
 					viewBox='0 0 24 24'
 					strokeWidth={1.5}
 					stroke='currentColor'
-					className='size-6'>
+					className='size-4 md:size-6'>
 					<path
 						strokeLinecap='round'
 						strokeLinejoin='round'
