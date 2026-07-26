@@ -1,5 +1,5 @@
 import Connector from '@/lib/connector'
-import type { UserRole, IReceiverConnector, canYouNeedThisFile, Files } from '@/models/connector'
+import type { UserRole, IReceiverConnector, canYouNeedThisFile } from '@/models/connector'
 import JSZip from 'jszip'
 export default class ReceiverConnector extends Connector implements IReceiverConnector {
 	userRole: UserRole | undefined = 'RECEIVER'

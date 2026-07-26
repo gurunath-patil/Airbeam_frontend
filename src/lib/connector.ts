@@ -159,7 +159,7 @@ export default class Connector extends SocketConnector implements IConnector {
 		this.isBothConnected = state === 'connected' || state === 'completed'
 	}
 
-	handleReceiverFiles(event: MessageEvent) {
+	handleReceiverFiles(_event: MessageEvent) {
 		throw new Error('Method not implemented.')
 	}
 
@@ -167,7 +167,7 @@ export default class Connector extends SocketConnector implements IConnector {
 		throw new Error('Method not implemented.')
 	}
 
-	handleSenderFileRequest(payload: canYouNeedThisFile): void {
+	handleSenderFileRequest(_payload: canYouNeedThisFile): void {
 		throw new Error('Method not implemented.')
 	}
 }
