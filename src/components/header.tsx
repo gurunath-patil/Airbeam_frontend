@@ -21,7 +21,7 @@ export default function Header(props: IHeaderProps) {
 					viewBox='0 0 24 24'
 					strokeWidth={1.5}
 					stroke='currentColor'
-					className='size-4 md:size-6'>
+					className='size-4 md:size-6 text-sky-400'>
 					<path
 						strokeLinecap='round'
 						strokeLinejoin='round'
@@ -31,7 +31,7 @@ export default function Header(props: IHeaderProps) {
 				<p className='uppercase'>peer transfer</p>
 				<span>|</span> <h2 className=''>{subtitle}</h2>
 			</div>
-			<div className='text-gray-400 font-mono hover:text-black'>
+			<div className='text-gray-400 font-mono hover:text-black '>
 				<button onClick={handleExitSession}>Exit session</button>
 			</div>
 		</div>

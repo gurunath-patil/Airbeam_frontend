@@ -11,7 +11,7 @@ export default function WaitingForTransfer() {
 					<div className='relative mb-6 flex h-14 w-14 items-center justify-center rounded-lg border border-gray-200 bg-white shadow-sm'>
 						{/* Wifi Icon */}
 						<svg
-							className='h-6 w-6 text-gray-700'
+							className='h-6 w-6 text-green-600'
 							fill='none'
 							stroke='currentColor'
 							strokeWidth='1.75'
@@ -23,9 +23,6 @@ export default function WaitingForTransfer() {
 								d='M8.25 12.75a3.75 3.75 0 015.5 0M12 15.75h.008v.008H12v-.008zm-6-6a8.25 8.25 0 0112 0M3 6.75a12.75 12.75 0 0118 0'
 							/>
 						</svg>
-
-						{/* Green Status Indicator Dot */}
-						<span className='absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-white' />
 					</div>
 
 					{/* Heading */}
