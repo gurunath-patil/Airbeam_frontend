@@ -35,6 +35,8 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 				const message = JSON.parse(event.data)
 				if (message.type === 'batch-start') {
 					this.totalBatchSize = message.totalSize
+					// FIX 1: Set expectedFileCount so the receiver knows when all files arrived
+					this.expectedFileCount = message.totalFiles || 1
 				}
 				if (message.type === 'file-metadata') {
 					this.fileMetadata = message
@@ -56,6 +58,7 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 			this.receivedChunks.push(buffer)
 			this.receivedSize += buffer.byteLength
 			this.totalReceivedBytes += buffer.byteLength
+
 			if (this.fileMetadata) {
 				const totalSizeToCompare =
 					this.totalBatchSize > 0 ? this.totalBatchSize : this.fileMetadata.size
@@ -64,18 +67,22 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 				this.transferProgress(progress)
 
 				if (this.receivedSize >= this.fileMetadata.size) {
-					const blob = new Blob(this.receivedChunks)
+					// FIX 2: Explicitly pass MIME type if receiving a zip directly
+					const isZip = this.fileMetadata.name.endsWith('.zip')
+					const blobOptions = isZip ? { type: 'application/zip' } : undefined
+					const blob = new Blob(this.receivedChunks, blobOptions)
+
 					this.receivedFiles.push({
 						name: this.fileMetadata.name,
 						blob: blob,
 					})
 
-					// Cleanup after download complete
+					// Cleanup per-file state
 					this.fileMetadata = null
 					this.receivedChunks = []
 					this.receivedSize = 0
 
-					// 👈 3. Check if all files have arrived
+					// Check if batch is complete
 					if (this.receivedFiles.length >= this.expectedFileCount) {
 						await this.triggerDownload()
 					}
@@ -125,43 +132,28 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 	async triggerDownload() {
 		if (this.receivedFiles.length === 0) return
 
-		// If single file sent, download directly
-		if (this.receivedFiles.length === 1) {
-			const file = this.receivedFiles[0]
-			this.downloadBlob(file.blob, file.name)
-		} else {
-			// Multiple files: Zip them together
-			console.log(`[${this.userRole}] Zipping ${this.receivedFiles.length} files...`)
-			const zip = new JSZip()
+		// Scenario A: Sender already compressed everything into 1 ZIP file (OR user sent 1 raw file)
+		const file = this.receivedFiles[0]
+		// this.downloadBlob(file.blob, file.name)
+		const url = URL.createObjectURL(file.blob)
+		const a = document.createElement('a')
+		a.href = url
+		a.download = file.name || 'sharedFiles.zip'
+		document.body.appendChild(a)
+		a.click()
+		document.body.removeChild(a)
 
-			for (const file of this.receivedFiles) {
-				zip.file(file.name, file.blob)
-			}
+		// FIX 3: Increased timeout to 10s so browser finishes disk write for larger ZIPs
+		setTimeout(() => URL.revokeObjectURL(url), 10000)
 
-			const zipBlob = await zip.generateAsync({ type: 'blob' })
-			this.downloadBlob(zipBlob, `bundle_${Date.now()}.zip`)
-		}
-
-		// Cleanup
+		// Reset state
 		this.receivedFiles = []
 		this.expectedFileCount = 0
 		this.totalBatchSize = 0
 		this.totalReceivedBytes = 0
 	}
 
-	private downloadBlob(blob: Blob, filename: string) {
-		const url = URL.createObjectURL(blob)
-		const a = document.createElement('a')
-		a.href = url
-		a.download = filename
-		document.body.appendChild(a)
-		a.click()
-		document.body.removeChild(a)
-		setTimeout(() => URL.revokeObjectURL(url), 1000)
-	}
-
 	exitSession() {
-		debugger
 		if (this.socketRef && this.socketRef.readyState === WebSocket.OPEN) {
 			this.socketRef.close()
 		}

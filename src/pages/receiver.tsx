@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom'
 export default function Receiver() {
 	const { receiverPeer, requestedSenderName, filesToSend } = usePeerContext()
 	const [isSenderRequest, setIsSenderRequest] = useState(false)
+	const [userName, setUserName] = useState<string>('')
+
 	const navigate = useNavigate()
 
 	useEffect(() => {
@@ -14,6 +16,7 @@ export default function Receiver() {
 			navigate('/')
 		}else{
 			receiverPeer.setSenderRequest(setIsSenderRequest)
+			receiverPeer.setUserName = setUserName
 		}
 	}, [])
 
@@ -35,6 +38,6 @@ export default function Receiver() {
 			onDecline={handleDeclineBtn}
 		/>
 	) : (
-		<WaitingForTransfer />
+		<WaitingForTransfer userName={userName} />
 	)
 }

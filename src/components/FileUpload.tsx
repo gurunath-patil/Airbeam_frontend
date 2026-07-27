@@ -7,8 +7,13 @@ export default function FileUpload() {
 
 	function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
 		const files = event.target.files
-		if (files && senderPeer) {
-			setFilesToSend([...filesToSend, files[0]])
+		if (files && files.length > 0 && senderPeer) {
+			// Convert FileList to an array and append all new files to state
+			const selectedFilesArray = Array.from(files)
+			setFilesToSend((prevFiles: Blob[]) => [...prevFiles, ...selectedFilesArray])
+
+			// Optional: Reset input so re-selecting the same file triggers onChange
+			event.target.value = ''
 		}
 	}
 
@@ -26,6 +31,8 @@ export default function FileUpload() {
 			<input
 				ref={buttonRef}
 				type='file'
+				multiple
+				accept='.png, .jpg, .jpeg, .pdf'
 				className='hidden'
 				id='file-upload'
 				onChange={handleFileUpload}

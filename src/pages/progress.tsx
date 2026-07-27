@@ -9,6 +9,7 @@ export default function Progress() {
 		usePeerContext()
 	const [transferred, setTransferred] = useState<number>(0)
 	const [totalSize, setTotalSize] = useState(0)
+	const [disableBackBtn, setDisableBackBtn] = useState<boolean>(false)
 	const navigate = useNavigate()
 
 	function getTransferredSize() {
@@ -17,6 +18,11 @@ export default function Progress() {
 	}
 	useEffect(() => {
 		getTransferredSize()
+		if (transferProgress < 97) {
+			setDisableBackBtn(true)
+		} else {
+			setDisableBackBtn(false)
+		}
 	}, [transferProgress])
 
 	useEffect(() => {
@@ -72,6 +78,7 @@ export default function Progress() {
 					</div>
 					<div className='mt-5 md:mt-0'>
 						<button
+							disabled={disableBackBtn}
 							onClick={onBackToHome}
 							className='w-full border border-gray-200 rounded bg-white hover:bg-gray-100 active:bg-gray-100 transition-colors py-4 text-sm font-medium text-gray-900 flex items-center justify-center gap-2 cursor-pointer'>
 							<svg

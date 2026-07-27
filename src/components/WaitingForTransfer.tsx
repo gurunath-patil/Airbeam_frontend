@@ -1,16 +1,9 @@
 import Header from '@/components/Header'
-import { usePeerContext } from '@/context/usePeerContext'
-import { useEffect, useState } from 'react'
 
-export default function WaitingForTransfer() {
-	const { receiverPeer } = usePeerContext()
-	const [userName, setUserName] = useState<string>('')
-
-	useEffect(() => {
-		if (receiverPeer) {
-			receiverPeer.setUserName = setUserName
-		}
-	}, [])
+interface IProps{
+	userName: string
+}
+export default function WaitingForTransfer({userName}:IProps) {
 
 	return (
 		<div>

@@ -1,5 +1,6 @@
 import Connector from '@/lib/connector'
 import type { UserRole, ISenderConnector } from '@/models/connector'
+import JSZip from 'jszip'
 
 export default class SenderConnector extends Connector implements ISenderConnector {
 	fileToSend: Blob[] | [] = []
@@ -18,20 +19,57 @@ export default class SenderConnector extends Connector implements ISenderConnect
 	async handleSenderFiles() {
 		console.log(`[${this.userRole}] Data channel opened`)
 		this.totalBatchSize = this.fileToSend.reduce((acc, file) => acc + file.size, 0)
+		let file: Blob
+		if (this.fileToSend.length > 1) {
+			file = await this.handleMultipleFile()
+		} else {
+			file = this.fileToSend[0]
+		}
+
+		if (file) {
+			this.sendFileMetaData()
+			await this.sendFiles(file)
+			this.totalBatchSize = 0
+		}
+	}
+
+	async handleMultipleFile() {
+		const zip = new JSZip()
+		if (this.fileToSend.length > 1) {
+			for (const file of this.fileToSend) {
+				const fileName = (file as File).name || 'file'
+				zip.file(fileName, file)
+			}
+		}
+		const zipBlob = await zip.generateAsync({
+			type: 'blob',
+			compression: 'DEFLATE',
+			compressionOptions: { level: 6 },
+		})
+
+		const zipFileName = this.generateZipName()
+		this.totalBatchSize = zipBlob.size
+		Object.defineProperty(zipBlob, 'name', { value: zipFileName })
+		return zipBlob
+	}
+
+	private generateZipName(prefix = 'Archive'): string {
+		const now = new Date()
+		const dateStr = now.toISOString().split('T')[0] // YYYY-MM-DD
+		const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '') // HHMMSS
+
+		return `${prefix}_${dateStr}_${timeStr}.zip`
+		// Example output: Archive_2026-07-27_202915.zip
+	}
+
+	sendFileMetaData() {
 		this.dataChannel?.send(
 			JSON.stringify({
 				type: 'batch-start',
-				totalFiles: this.fileToSend.length,
+				totalFiles: 1,
 				totalSize: this.totalBatchSize,
 			}),
 		)
-
-		if (this.fileToSend.length > 0) {
-			for (let file of this.fileToSend) {
-				await this.sendFiles(file)
-			}
-			this.totalBatchSize = 0
-		}
 	}
 
 	async sendFiles(file: Blob): Promise<void> {
