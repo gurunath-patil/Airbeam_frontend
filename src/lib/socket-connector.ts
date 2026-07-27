@@ -1,8 +1,9 @@
-import type { ISocketIDPayload, UserRole, IPayload } from '@/models/connector.ts'
+import type { ISocketIDPayload, UserRole, IPayload, IUserList } from '@/models/connector.ts'
+import { senderReceiver } from '@/services/base.service'
 
 export default abstract class SocketConnector {
 	socketRef: WebSocket | undefined
-	socketID: string = ''
+	userDetails: IUserList | undefined
 	socketBaseUrl: string = import.meta.env.VITE_WEB_SOCKET_BASE_URL
 	userRole: UserRole | undefined
 	receiverChannelName: string = ''
@@ -12,7 +13,22 @@ export default abstract class SocketConnector {
 	private socketOpenPromise: Promise<void> | undefined
 	private resolveSocketOpen: (() => void) | undefined
 	private rejectSocketOpen: ((reason: any) => void) | undefined
-	methodRef: Record<string, (payload: any) => void> | undefined = undefined
+	methodRef: Record<string, (payload: any) => void> | undefined
+	setUserName: ((state: string) => void) | undefined
+
+	constructor() {
+		this.methodRef = {
+			...this.methodRef,
+			added_user_details: (payload) => this.added_user_details(payload),
+		}
+	}
+
+	async added_user_details(payload: { type: string; user_details: IUserList }) {
+		this.userDetails = payload.user_details
+		if (this.setUserName) {
+			this.setUserName(this.userDetails.user_name)
+		}
+	}
 
 	setReceiverChannel(channelName: string) {
 		this.receiverChannelName = channelName

@@ -1,6 +1,17 @@
 import Header from '@/components/Header'
+import { usePeerContext } from '@/context/usePeerContext'
+import { useEffect, useState } from 'react'
 
 export default function WaitingForTransfer() {
+	const { receiverPeer } = usePeerContext()
+	const [userName, setUserName] = useState<string>('')
+
+	useEffect(() => {
+		if (receiverPeer) {
+			receiverPeer.setUserName = setUserName
+		}
+	}, [])
+
 	return (
 		<div>
 			<Header subtitle='Receiver' />
@@ -31,7 +42,17 @@ export default function WaitingForTransfer() {
 
 					{/* Description */}
 					<p className='text-sm text-gray-500 leading-relaxed'>
-						Your device is discoverable on the local network.
+						Your device is discoverable{' '}
+						{userName && (
+							<span>
+								as {''}
+								<span className='bg-sky-600 hover:bg-sky-800 p-1 rounded-md text-white font-semibold'>
+									{userName}
+								</span>{' '}
+								{''}
+							</span>
+						)}
+						on the local network.
 						<br />
 						Stay on this page.
 					</p>
