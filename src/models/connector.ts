@@ -1,7 +1,6 @@
 interface IConnector {
 	socketRef: undefined | WebSocket
 	peerConnection: undefined | RTCPeerConnection
-	socketID: string
 	userRole: UserRole | undefined
 	dataChannel: RTCDataChannel | undefined
 	isBothConnected: boolean

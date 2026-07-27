@@ -12,7 +12,8 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 	isSenderRequest: (state: boolean) => void = () => {}
 	receivedFiles: { name: string; blob: Blob }[] = []
 	expectedFileCount: number = 0
-
+	totalBatchSize: number = 0
+	totalReceivedBytes: number = 0
 	constructor(
 		transferProgress: (prev: number) => number,
 		setRequestedSenderName: (payload: string) => void,
@@ -32,6 +33,9 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 		if (typeof event.data === 'string') {
 			try {
 				const message = JSON.parse(event.data)
+				if (message.type === 'batch-start') {
+					this.totalBatchSize = message.totalSize
+				}
 				if (message.type === 'file-metadata') {
 					this.fileMetadata = message
 					this.receivedChunks = []
@@ -51,9 +55,12 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 			const buffer = event.data as ArrayBuffer
 			this.receivedChunks.push(buffer)
 			this.receivedSize += buffer.byteLength
-
+			this.totalReceivedBytes += buffer.byteLength
 			if (this.fileMetadata) {
-				const progress = Math.min((this.receivedSize / this.fileMetadata.size) * 100, 100)
+				const totalSizeToCompare =
+					this.totalBatchSize > 0 ? this.totalBatchSize : this.fileMetadata.size
+				const progressBytes = this.totalBatchSize > 0 ? this.totalReceivedBytes : this.receivedSize
+				const progress = Math.min((progressBytes / totalSizeToCompare) * 100, 100)
 				this.transferProgress(progress)
 
 				if (this.receivedSize >= this.fileMetadata.size) {
@@ -62,8 +69,6 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 						name: this.fileMetadata.name,
 						blob: blob,
 					})
-
-					// console.log(`[${this.userRole}] File received and downloaded: ${this.fileMetadata.name}`)
 
 					// Cleanup after download complete
 					this.fileMetadata = null
@@ -140,6 +145,8 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 		// Cleanup
 		this.receivedFiles = []
 		this.expectedFileCount = 0
+		this.totalBatchSize = 0
+		this.totalReceivedBytes = 0
 	}
 
 	private downloadBlob(blob: Blob, filename: string) {

@@ -5,7 +5,7 @@ export default class SenderConnector extends Connector implements ISenderConnect
 	fileToSend: Blob[] | [] = []
 	userRole: UserRole | undefined = 'SENDER'
 	transferProgress: (prev: number) => number
-
+	totalBatchSize: number = 0
 	constructor(transferProgress: (prev: number) => number) {
 		super()
 		this.transferProgress = transferProgress
@@ -17,11 +17,20 @@ export default class SenderConnector extends Connector implements ISenderConnect
 	}
 	async handleSenderFiles() {
 		console.log(`[${this.userRole}] Data channel opened`)
-		this.dataChannel?.send('hello from SENDER')
+		this.totalBatchSize = this.fileToSend.reduce((acc, file) => acc + file.size, 0)
+		this.dataChannel?.send(
+			JSON.stringify({
+				type: 'batch-start',
+				totalFiles: this.fileToSend.length,
+				totalSize: this.totalBatchSize,
+			}),
+		)
+
 		if (this.fileToSend.length > 0) {
 			for (let file of this.fileToSend) {
 				await this.sendFiles(file)
 			}
+			this.totalBatchSize = 0
 		}
 	}
 
@@ -50,8 +59,6 @@ export default class SenderConnector extends Connector implements ISenderConnect
 			let offset = 0
 
 			const sendChunk = () => {
-				this.transferProgress((offset / fileSize) * 100)
-
 				while (offset < fileSize) {
 					// Backpressure check
 					if (this.dataChannel && this.dataChannel.bufferedAmount > 65535) {
@@ -69,6 +76,8 @@ export default class SenderConnector extends Connector implements ISenderConnect
 						if (e.target?.result && this.dataChannel && this.dataChannel.readyState === 'open') {
 							this.dataChannel.send(e.target.result as ArrayBuffer)
 							offset += slice.size
+
+							this.transferProgress((offset / this.totalBatchSize) * 100)
 							sendChunk()
 						}
 					}
@@ -80,7 +89,7 @@ export default class SenderConnector extends Connector implements ISenderConnect
 
 				console.log(`File ${fileName} sent successfully!`)
 				this.transferProgress(100)
-				resolve() // ✅ Resolve promise when file transfer finishes
+				resolve() // Resolve promise when file transfer finishes
 			}
 
 			sendChunk()
