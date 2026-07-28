@@ -18,6 +18,7 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 		transferProgress: (prev: number) => number,
 		setRequestedSenderName: (payload: string) => void,
 		requestedFiles: (payload: Blob[]) => void,
+		setUserName: (state: string) => void,
 	) {
 		super()
 		this.methodRef = {
@@ -27,6 +28,7 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 		this.transferProgress = transferProgress
 		this.requestedSenderName = setRequestedSenderName
 		this.requestedFiles = requestedFiles
+		this.setUserName = setUserName
 	}
 
 	async handleReceiverFiles(event: MessageEvent) {
@@ -154,8 +156,10 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 	}
 
 	exitSession() {
-		if (this.socketRef && this.socketRef.readyState === WebSocket.OPEN) {
+		if (this.socketRef) {
 			this.socketRef.close()
+		}else{
+			console.log('No socket to close, socket ref is null')
 		}
 	}
 }

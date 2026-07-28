@@ -7,18 +7,17 @@ import { usePeerContext } from '@/context/usePeerContext'
 import { useNavigate } from 'react-router-dom'
 
 export default function Sender() {
-	const { senderPeer, filesToSend, transferProgress } = usePeerContext()
+	const { senderPeer, filesToSend,setFilesToSend, transferProgress } = usePeerContext()
 	const navigate = useNavigate()
 
 	useEffect(() => {
 		if (!senderPeer) {
 			navigate('/')
+		}else{
+			setFilesToSend([])
 		}
 	}, [])
 
-	useEffect(() => {
-		console.log('sender side transferProgress', transferProgress)
-	}, [transferProgress])
 	return (
 		<>
 			<Header subtitle='Sender' />

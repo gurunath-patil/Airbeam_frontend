@@ -157,7 +157,7 @@ export default class SenderConnector extends Connector implements ISenderConnect
 		if (answer) {
 			this.createSDPOffer()
 		} else {
-			console.log('receiver Declined request!')
+			window.location.href = '/'
 		}
 	}
 }

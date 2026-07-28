@@ -1,4 +1,5 @@
 import type { Files } from '@/models/connector'
+import { formatFileSize } from '@/utils'
 
 interface IFileTransferNotification {
 	senderName: string
@@ -101,10 +102,12 @@ const FileTransferNotification = ({
 								)}
 							</div>
 							<div>
-								<p className='text-sm font-bold text-gray-900 hover:underline cursor-pointer'>
+								<p className='text-sm font-bold truncate max-w-60 md:max-w-full text-gray-900 hover:underline cursor-pointer'>
 									{file.name}
 								</p>
-								<p className='text-xs text-gray-400 mt-1 font-medium'>{file.size}</p>
+								<p className='text-xs text-gray-400 mt-1 font-medium'>
+									{formatFileSize(Number(file.size))}
+								</p>
 							</div>
 						</div>
 					))}
@@ -113,7 +116,7 @@ const FileTransferNotification = ({
 				{/* Info Counter Panel */}
 				<div className='flex justify-between items-center px-5 py-4 border-t border-gray-100 bg-white text-xs text-gray-400 font-medium'>
 					<span>{totalFiles} files</span>
-					<span>{totalSize}</span>
+					<span>{formatFileSize(Number(totalSize.split(' ')[0]))}</span>
 				</div>
 
 				{/* Action Controls */}

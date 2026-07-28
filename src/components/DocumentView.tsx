@@ -33,7 +33,7 @@ export default function FileAttachment({ files = [] }: IProps) {
 							</svg>
 							<span className='text-gray-900 truncate font-sans tracking-wide'>{file.name}</span>
 						</div>
-						<span className='text-gray-400'>{(file.size / 1024).toFixed(1)} KB</span>
+						<span className='text-gray-400'>{formatFileSize(file.size / 1024)}</span>
 					</div>
 
 					{index === files.length - 1 && (

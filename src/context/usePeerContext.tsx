@@ -10,6 +10,8 @@ export default function UsePeer({ children }: { children: ReactNode }) {
 	const [filesToSend, setFilesToSend] = useState<Blob[] | []>([])
 	const [transferProgress, setTransferProgress] = useState<number>(0)
 	const [requestedSenderName, setRequestedSenderName] = useState<string>('')
+	const [userName, setUserName] = useState<string>('')
+
 	return (
 		<PeerContext.Provider
 			value={{
@@ -23,6 +25,8 @@ export default function UsePeer({ children }: { children: ReactNode }) {
 				setTransferProgress,
 				requestedSenderName,
 				setRequestedSenderName,
+				userName,
+				setUserName,
 			}}>
 			{children}
 		</PeerContext.Provider>
@@ -41,6 +45,8 @@ export function usePeerContext() {
 		setTransferProgress,
 		requestedSenderName,
 		setRequestedSenderName,
+		userName,
+		setUserName,
 	} = useContext(PeerContext)
 	return {
 		senderPeer,
@@ -53,5 +59,7 @@ export function usePeerContext() {
 		setTransferProgress,
 		requestedSenderName,
 		setRequestedSenderName,
+		userName,
+		setUserName,
 	}
 }
