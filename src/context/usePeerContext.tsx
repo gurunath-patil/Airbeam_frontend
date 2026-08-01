@@ -12,6 +12,12 @@ export default function UsePeer({ children }: { children: ReactNode }) {
 	const [requestedSenderName, setRequestedSenderName] = useState<string>('')
 	const [userName, setUserName] = useState<string>('')
 
+	function removeFile(index: number) {
+		const newFiles = [...filesToSend]
+		newFiles.splice(index, 1)
+		setFilesToSend(newFiles)
+	}
+
 	return (
 		<PeerContext.Provider
 			value={{
@@ -27,6 +33,7 @@ export default function UsePeer({ children }: { children: ReactNode }) {
 				setRequestedSenderName,
 				userName,
 				setUserName,
+				removeFile,
 			}}>
 			{children}
 		</PeerContext.Provider>
@@ -47,6 +54,7 @@ export function usePeerContext() {
 		setRequestedSenderName,
 		userName,
 		setUserName,
+		removeFile,
 	} = useContext(PeerContext)
 	return {
 		senderPeer,
@@ -61,5 +69,6 @@ export function usePeerContext() {
 		setRequestedSenderName,
 		userName,
 		setUserName,
+		removeFile,
 	}
 }

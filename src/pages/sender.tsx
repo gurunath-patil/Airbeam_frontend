@@ -7,7 +7,7 @@ import { usePeerContext } from '@/context/usePeerContext'
 import { useNavigate } from 'react-router-dom'
 
 export default function Sender() {
-	const { senderPeer, filesToSend,setFilesToSend, transferProgress } = usePeerContext()
+	const { senderPeer, filesToSend,setFilesToSend, removeFile } = usePeerContext()
 	const navigate = useNavigate()
 
 	useEffect(() => {
@@ -25,7 +25,7 @@ export default function Sender() {
 				<div className='flex flex-col gap-y-5'>
 					<FileUpload />
 					<div>
-						<FileAttachment files={filesToSend} />
+						<FileAttachment files={filesToSend} removeFile={removeFile} showRemoveButton={true} />
 					</div>
 				</div>
 				<div className=' border-amber-600'>

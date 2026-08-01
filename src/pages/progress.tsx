@@ -9,7 +9,8 @@ export default function Progress() {
 		usePeerContext()
 	const [transferred, setTransferred] = useState<number>(0)
 	const [totalSize, setTotalSize] = useState(0)
-	const [disableBackBtn, setDisableBackBtn] = useState<boolean>(false)
+	// const [disableBackBtn, setDisableBackBtn] = useState<boolean>(false)
+	const [disableBackBtn, setDisableBackBtn] = useState<boolean>(true) // remove once testing done
 	const navigate = useNavigate()
 
 	function getTransferredSize() {
@@ -74,13 +75,13 @@ export default function Progress() {
 				</div>
 				<div className='flex flex-col justify-between'>
 					<div className='mt-5 md:mt-0'>
-						<DocumentView files={filesToSend} />
+						<DocumentView files={filesToSend} removeFile={(index: number) => console.log(index)} showRemoveButton={false} />
 					</div>
 					<div className='mt-5 md:mt-0'>
 						<button
 							disabled={disableBackBtn}
 							onClick={onBackToHome}
-							className='w-full border border-gray-200 rounded bg-white hover:bg-gray-100 active:bg-gray-100 transition-colors py-4 text-sm font-medium text-gray-900 flex items-center justify-center gap-2 cursor-pointer'>
+							className={`w-full border border-gray-200 rounded hover:bg-gray-100 active:bg-gray-100 transition-colors py-4 text-sm font-medium text-gray-900 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed`}>
 							<svg
 								className='w-4 h-4 text-gray-900'
 								fill='none'
