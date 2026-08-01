@@ -32,7 +32,7 @@ export default function FileUpload() {
 				ref={buttonRef}
 				type='file'
 				multiple
-				accept='.png, .jpg, .jpeg, .pdf'
+				accept='.png, .jpg, .jpeg, .pdf, .doc, .docx, .mp4, .mov, .avi, .mkv, .txt, .csv, .xlsx, .pptx'
 				className='hidden'
 				id='file-upload'
 				onChange={handleFileUpload}
