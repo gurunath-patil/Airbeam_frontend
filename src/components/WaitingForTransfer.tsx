@@ -1,10 +1,9 @@
 import Header from '@/components/Header'
 
-interface IProps{
+interface IProps {
 	userName: string
 }
-export default function WaitingForTransfer({userName}:IProps) {
-
+export default function WaitingForTransfer({ userName }: IProps) {
 	return (
 		<div>
 			<Header subtitle='Receiver' />
@@ -36,13 +35,19 @@ export default function WaitingForTransfer({userName}:IProps) {
 					{/* Description */}
 					<p className='text-sm text-gray-500 leading-relaxed'>
 						Your device is discoverable{' '}
-						{userName && (
+						{userName ? (
 							<span>
 								as {''}
 								<span className='bg-sky-600 hover:bg-sky-800 p-1 rounded-md text-white font-semibold'>
 									{userName}
 								</span>{' '}
 								{''}
+							</span>
+						) : (
+							<span className='inline-flex items-center gap-1 mx-1 align-middle'>
+								<span className='h-2 w-2 rounded-full bg-slate-500 animate-pulse [animation-delay:-0.4s]' />
+								<span className='h-2 w-2 rounded-full bg-slate-500 animate-pulse [animation-delay:-0.2s]' />
+								<span className='h-2 w-2 rounded-full bg-slate-500 animate-pulse' />
 							</span>
 						)}
 						on the local network.
@@ -52,7 +57,12 @@ export default function WaitingForTransfer({userName}:IProps) {
 
 					{/* Status Line */}
 					<div className='mt-10 font-mono text-xs text-gray-400'>
-						Listening for incoming connections...
+						Listening for incoming connections
+						<span className='inline-flex items-center gap-1 mx-1 align-middle'>
+							<span className='h-1 w-1 rounded-full bg-slate-500 animate-bounce [animation-delay:-0.3s]' />
+							<span className='h-1 w-1 rounded-full bg-slate-500 animate-bounce [animation-delay:-0.15s]' />
+							<span className='h-1 w-1 rounded-full bg-slate-500 animate-bounce' />
+						</span>
 					</div>
 				</div>
 			</div>
