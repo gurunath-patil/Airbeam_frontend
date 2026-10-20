@@ -7,7 +7,7 @@ export default function Header(props: IHeaderProps) {
 	const navigate = useNavigate()
 
 	function handleExitSession() {
-		if(subtitle === 'Receiver'){
+		if (subtitle === 'Receiver') {
 			receiverPeer.exitSession()
 		}
 		navigate('/')
@@ -31,8 +31,21 @@ export default function Header(props: IHeaderProps) {
 				<p className='uppercase'>peer transfer</p>
 				<span>|</span> <h2 className=''>{subtitle}</h2>
 			</div>
-			<div className='text-gray-400 font-mono hover:text-black '>
-				<button onClick={handleExitSession}>Exit session</button>
+			<div className='font-mono text-white'>
+				<button
+					onClick={handleExitSession}
+					className='bg-red-400 py-1 px-2 rounded-lg flex items-center gap-x-1'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						fill='none'
+						viewBox='0 0 24 24'
+						strokeWidth={1.5}
+						stroke='currentColor'
+						className='size-5'>
+						<path strokeLinecap='round' strokeLinejoin='round' d='M6 18 18 6M6 6l12 12' />
+					</svg>
+					Exit
+				</button>
 			</div>
 		</div>
 	)

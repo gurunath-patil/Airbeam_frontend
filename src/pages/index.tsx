@@ -41,22 +41,20 @@ export default function HomePage() {
 						viewBox='0 0 24 24'
 						strokeWidth={1.5}
 						stroke='currentColor'
-						className='size-6'>
+						className='size-9 text-sky-600'>
 						<path
 							strokeLinecap='round'
 							strokeLinejoin='round'
 							d='M8.288 15.038a5.25 5.25 0 0 1 7.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 0 1 1.06 0Z'
 						/>
 					</svg>
-					<p className='uppercase'>peer transfer</p>
 				</div>
 				<h3 className='capitalize text-4xl font-thin'>who are you?</h3>
-				<p className='capitalize text-gray-400'>select your role to begin the session.</p>
 			</div>
 
-			<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+			<div className='grid grid-cols-1 md:grid-cols-2 gap-10'>
 				<button
-					className='w-[260px] h-[230px] md:h-[260px] bg-white border border-gray-200 text-left p-8 flex flex-col justify-start items-start transition-all hover:border-gray-400 hover:shadow-sm focus:outline-none group'
+					className='w-[260px] h-[230px] md:h-[260px] bg-white border border-gray-200 text-left p-8 flex flex-col justify-start items-start transition-all hover:border-gray-400 hover:shadow-sm focus:outline-none group shadow-xl rounded-xl'
 					onClick={handleSenderClick}>
 					<div className='mb-7 text-gray-500 group-hover:text-gray-800 transition-colors'>
 						<svg
@@ -65,7 +63,7 @@ export default function HomePage() {
 							viewBox='0 0 24 24'
 							strokeWidth={1.5}
 							stroke='currentColor'
-							className='size-10'>
+							className='size-10 text-blue-600'>
 							<path
 								strokeLinecap='round'
 								strokeLinejoin='round'
@@ -82,7 +80,7 @@ export default function HomePage() {
 					</div>
 				</button>
 				<button
-					className='w-[260px] h-[230px] md:h-[260px] bg-white border border-gray-200 text-left p-8 flex flex-col justify-start items-start transition-all hover:border-gray-400 hover:shadow-sm focus:outline-none group'
+					className='w-[260px] h-[230px] md:h-[260px] bg-white border border-gray-200 text-left p-8 flex flex-col justify-start items-start transition-all hover:border-gray-400 hover:shadow-sm focus:outline-none group shadow-xl rounded-xl'
 					onClick={handleReceiverClick}>
 					<div className='mb-7 text-gray-500 group-hover:text-gray-800 transition-colors'>
 						<svg
@@ -91,7 +89,7 @@ export default function HomePage() {
 							viewBox='0 0 24 24'
 							strokeWidth={1.5}
 							stroke='currentColor'
-							className='size-10'>
+							className='size-10 text-green-600'>
 							<path
 								strokeLinecap='round'
 								strokeLinejoin='round'
@@ -108,9 +106,23 @@ export default function HomePage() {
 					</div>
 				</button>
 			</div>
-			<div className='flex justify-center px-10 md:px-0'>
-				<p className='text-gray-400 font-mono'>
-					Devices on the same network are discovered automatically.
+			<div className='flex justify-center items-center p-5 bg-indigo-100 rounded-2xl mx-6 md:mx-0'>
+				<svg
+					xmlns='http://www.w3.org/2000/svg'
+					fill='none'
+					viewBox='0 0 24 24'
+					strokeWidth={1.5}
+					stroke='currentColor'
+					className='size-5 me-2 text-amber-700'>
+					<path
+						strokeLinecap='round'
+						strokeLinejoin='round'
+						d='m21 7.5-2.25-1.313M21 7.5v2.25m0-2.25-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3 2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75 2.25-1.313M12 21.75V19.5m0 2.25-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25'
+					/>
+				</svg>
+
+				<p className='text-dark font-mono'>
+					Devices on the same network will discover automatically.
 				</p>
 			</div>
 		</div>
