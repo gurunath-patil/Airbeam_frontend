@@ -7,6 +7,8 @@ export default class SenderConnector extends Connector implements ISenderConnect
 	userRole: UserRole | undefined = 'SENDER'
 	transferProgress: (prev: number) => number
 	totalBatchSize: number = 0
+	zipPromise: Promise<Blob> | null = null
+
 	constructor(transferProgress: (prev: number) => number) {
 		super()
 		this.transferProgress = transferProgress
@@ -16,26 +18,33 @@ export default class SenderConnector extends Connector implements ISenderConnect
 			can_you_need_this_files_answer: (payload) => this.canIStartSending(payload),
 		}
 	}
+
 	async handleSenderFiles() {
 		console.log(`[${this.userRole}] Data channel opened`)
-		this.totalBatchSize = this.fileToSend.reduce((acc, file) => acc + file.size, 0)
 		let file: Blob
-		if (this.fileToSend.length > 1) {
-			file = await this.handleMultipleFile()
-		} else {
-			file = this.fileToSend[0]
+		try {
+			if (this.fileToSend.length > 0) {
+				file = this.zipPromise ? await this.zipPromise : await this.handleMultipleFile()
+			} else {
+				return
+			}
+		} catch (error) {
+			console.error(`[${this.userRole}] Error preparing files for sending:`, error)
+			return
 		}
 
 		if (file) {
-			this.sendFileMetaData()
+			this.totalBatchSize = file.size
+			this.sendFileMetaData(this.fileToSend.length)
 			await this.sendFiles(file)
 			this.totalBatchSize = 0
+			this.zipPromise = null
 		}
 	}
 
-	async handleMultipleFile() {
+	async handleMultipleFile(): Promise<Blob> {
 		const zip = new JSZip()
-		if (this.fileToSend.length > 1) {
+		if (this.fileToSend.length > 0) {
 			for (const file of this.fileToSend) {
 				const fileName = (file as File).name || 'file'
 				zip.file(fileName, file)
@@ -50,6 +59,7 @@ export default class SenderConnector extends Connector implements ISenderConnect
 		const zipFileName = this.generateZipName()
 		this.totalBatchSize = zipBlob.size
 		Object.defineProperty(zipBlob, 'name', { value: zipFileName })
+		console.log('zip file method done there work')
 		return zipBlob
 	}
 
@@ -62,12 +72,13 @@ export default class SenderConnector extends Connector implements ISenderConnect
 		// Example output: Archive_2026-07-27_202915.zip
 	}
 
-	sendFileMetaData() {
+	sendFileMetaData(rawFileCount: number) {
 		this.dataChannel?.send(
 			JSON.stringify({
 				type: 'batch-start',
 				totalFiles: 1,
 				totalSize: this.totalBatchSize,
+				rawFiles: rawFileCount,
 			}),
 		)
 	}
@@ -150,6 +161,15 @@ export default class SenderConnector extends Connector implements ISenderConnect
 			receiver_channel_name: this.receiverChannelName,
 			files: payload,
 		})
+
+		// Perform background ZIP compression when request is sent to the receiver (for single and multiple files)
+		if (this.fileToSend.length > 1) {
+			console.log(`[${this.userRole}] Starting background zip compression...`)
+			this.zipPromise = this.handleMultipleFile().catch((err) => {
+				console.error(`[${this.userRole}] Background zip compression error:`, err)
+				throw err
+			})
+		}
 	}
 
 	canIStartSending(payload: { sender_channel_name: string; answer: boolean }): void {
@@ -157,6 +177,7 @@ export default class SenderConnector extends Connector implements ISenderConnect
 		if (answer) {
 			this.createSDPOffer()
 		} else {
+			this.zipPromise = null
 			window.location.href = '/'
 		}
 	}

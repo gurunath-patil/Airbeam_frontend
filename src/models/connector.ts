@@ -23,6 +23,8 @@ interface ISenderConnector extends IConnector {
 	fileToSend: Blob[] | []
 	sendFiles(file: Blob): Promise<void>
 	canYouNeedThisFile(): void
+	zipPromise?: Promise<Blob> | null
+	handleMultipleFile?(): Promise<Blob>
 }
 
 type Files = {
@@ -38,6 +40,7 @@ type canYouNeedThisFile = {
 }
 interface IReceiverConnector extends IConnector {
 	handleSenderFileRequest(metaData: canYouNeedThisFile): void
+	rawFilesCount: number
 }
 
 type PayloadType =
@@ -90,5 +93,5 @@ export type {
 	ISenderConnector,
 	IReceiverConnector,
 	canYouNeedThisFile,
-	Files
+	Files,
 }

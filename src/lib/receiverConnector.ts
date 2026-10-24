@@ -1,6 +1,7 @@
 import Connector from '@/lib/connector'
 import type { UserRole, IReceiverConnector, canYouNeedThisFile } from '@/models/connector'
 import JSZip from 'jszip'
+
 export default class ReceiverConnector extends Connector implements IReceiverConnector {
 	userRole: UserRole | undefined = 'RECEIVER'
 	fileMetadata: { name: string; size: number } | null = null
@@ -14,6 +15,8 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 	expectedFileCount: number = 0
 	totalBatchSize: number = 0
 	totalReceivedBytes: number = 0
+	rawFilesCount: number = 0
+
 	constructor(
 		transferProgress: (prev: number) => number,
 		setRequestedSenderName: (payload: string) => void,
@@ -37,8 +40,9 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 				const message = JSON.parse(event.data)
 				if (message.type === 'batch-start') {
 					this.totalBatchSize = message.totalSize
-					// FIX 1: Set expectedFileCount so the receiver knows when all files arrived
+					// Set expectedFileCount so the receiver knows when all files arrived
 					this.expectedFileCount = message.totalFiles || 1
+					this.rawFilesCount = message.rawFiles || 1
 				}
 				if (message.type === 'file-metadata') {
 					this.fileMetadata = message
@@ -69,7 +73,7 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 				this.transferProgress(progress)
 
 				if (this.receivedSize >= this.fileMetadata.size) {
-					// FIX 2: Explicitly pass MIME type if receiving a zip directly
+					// Explicitly pass MIME type if receiving a zip directly
 					const isZip = this.fileMetadata.name.endsWith('.zip')
 					const blobOptions = isZip ? { type: 'application/zip' } : undefined
 					const blob = new Blob(this.receivedChunks, blobOptions)
@@ -153,6 +157,7 @@ export default class ReceiverConnector extends Connector implements IReceiverCon
 		this.expectedFileCount = 0
 		this.totalBatchSize = 0
 		this.totalReceivedBytes = 0
+		this.rawFilesCount = 0
 	}
 
 	exitSession() {

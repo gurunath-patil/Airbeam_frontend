@@ -7,14 +7,20 @@ import { usePeerContext } from '@/context/usePeerContext'
 import { useNavigate } from 'react-router-dom'
 
 export default function Sender() {
-	const { senderPeer, filesToSend,setFilesToSend, removeFile } = usePeerContext()
+	const { senderPeer, filesToSend, setFilesToSend, removeFile } = usePeerContext()
 	const navigate = useNavigate()
 
 	useEffect(() => {
 		if (!senderPeer) {
 			navigate('/')
-		}else{
+		} else {
 			setFilesToSend([])
+			if (senderPeer) {
+				senderPeer.fileToSend = []
+				if ('zipPromise' in senderPeer) {
+					senderPeer.zipPromise = null
+				}
+			}
 		}
 	}, [])
 
